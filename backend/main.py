@@ -8,6 +8,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
+import os
+from fastapi.staticfiles import StaticFiles
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +22,7 @@ app.add_middleware(
 
 app.include_router(router, prefix="/api")
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the NLP Resume Parser API"}
+# Serve frontend statically
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+if os.path.exists(frontend_path):
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
